@@ -28,8 +28,12 @@ struct Plist {
   
   let name:String
   
-  var sourcePath:String? {
-    guard let path = Bundle.main.path(forResource: name, ofType: "plist") else { return .none }
+    var bundle:Bundle {
+        return Bundle(for: SwiftyPlistManager.self)
+    }
+    
+    var sourcePath:String? {
+    guard let path = bundle.path(forResource: name, ofType: "plist") else { return .none }
     return path
   }
   
