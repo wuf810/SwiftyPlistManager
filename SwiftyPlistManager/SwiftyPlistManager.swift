@@ -101,6 +101,27 @@ struct Plist {
     }
   }
 
+  func addSkipBackupAttributeToPlistFile() -> Bool {
+    
+      let fileManager = FileManager.default
+    
+      guard let filePath = destPath, fileManager.fileExists(atPath: filePath) else {
+          return false
+      }
+    
+      var urlToExclude = URL(fileURLWithPath: filePath)
+    
+      do {
+          var resourceValues = URLResourceValues()
+          resourceValues.isExcludedFromBackup = true
+          try urlToExclude.setResourceValues(resourceValues)
+          return true
+      } catch {
+          return false
+      }
+    
+  }
+
 }
 
 public enum SwiftyPlistManagerError: Error {
@@ -369,7 +390,16 @@ public class SwiftyPlistManager {
     
   }
   
-  func keyAlreadyExists(key: String, inPlistWithName: String) -> Bool {
+  public func addSkipBackupAttribute(toPlistWithName: String) -> Bool {
+    
+      if let plist = Plist(name: toPlistWithName) {
+          return plist.addSkipBackupAttributeToPlistFile()
+      }
+    
+      return false
+  }
+
+    func keyAlreadyExists(key: String, inPlistWithName: String) -> Bool {
     var keyExists = false
     
     if let plist = Plist(name: inPlistWithName) {
